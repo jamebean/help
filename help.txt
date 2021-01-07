@@ -1,0 +1,60 @@
+ ShellExecute(NULL,"open",".\\help.chm",NULL,NULL,SW_SHOWMAXIMIZED);
+
+
+
+LPCWSTR Filename=_T("ADO210.CHM");
+LPCWSTR Operaton=_T("open");
+::ShellExecute(m_hWnd,Operaton,Filename,NULL,NULL,SW_SHOWMAXIMIZED); 
+
+
+BOOL CTestDlg::PreTranslateMessage(MSG* pMsg) 
+{
+    if (pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_F1) 
+    {
+        /*
+         * 打开帮助文档并定位到指定页面
+         */
+		 CString strPageName;
+        strPageName = "test_page1"; //指定页面的名称
+		CString strUrl;
+		PROCESS_INFORMATION pi;
+		ZeroMemory(&pi,sizeof(PROCESS_INFORMATION));
+		STARTUPINFO si;
+		ZeroMemory( &si, sizeof(si) );
+		si.cb = sizeof(si);
+
+		strUrl = _T("hh.exe \"mk:@MSITStore:.\\ADO210.CHM::/");
+		strUrl += strPageName;
+		strUrl += _T(".htm\"");
+
+		USES_CONVERSION; 
+		LPWSTR pwStr=new wchar_t[strUrl.GetLength()+1]; 
+		wcscpy(pwStr,T2W((LPTSTR)(LPCTSTR)strUrl)); 
+
+		if( !CreateProcess(NULL,
+			pwStr,
+			NULL,
+			NULL,
+			FALSE,
+			CREATE_NO_WINDOW,
+			NULL,
+			NULL,
+			&si,
+			&pi ))
+		{
+
+		}
+		else
+		{
+			CloseHandle(pi.hThread);
+		}
+        return TRUE;
+    }
+	return CDialog::PreTranslateMessage(pMsg);
+}
+
+
+
+pb 有一个showhelp（）也挺好使的：
+
+ShowHelp("EMP.HLP", Topic!, 143) 
